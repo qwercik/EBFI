@@ -3,5 +3,5 @@ project(EBFI)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp Interpreter.cpp Interpreter.hpp)
-add_executable(EBFI ${SOURCE_FILES})
+set(SOURCE_FILES src/main.cpp src/Interpreter.cpp src/Interpreter.hpp)
+add_executable(ebfi ${SOURCE_FILES})
