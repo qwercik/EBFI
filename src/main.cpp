@@ -1,11 +1,25 @@
 #include <iostream>
+#include <string>
 #include "Interpreter.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
-    ebfi::Interpreter interpreter;
-    interpreter.setSourceCode("++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.");
-	interpreter.executeCode();
+	if (argc != 2)
+	{
+		std::cerr << "Incorrect usage!\n";
+		std::cerr << "Use: " << argv[0] << " code.bf\n";
+		return 1;
+	}
 
-    return 0;
+	ebfi::Interpreter interpreter;
+	
+	std::string filename = argv[1];
+
+	if (!interpreter.loadCodeFromFile(filename))
+	{
+		std::cerr << "File " << argv[1] << " doesn\'t exist";
+		return 2;
+	}
+	
+	interpreter.executeCode();
 }
