@@ -1,6 +1,3 @@
-Code comes from http://www.99-bottles-of-beer.net/language-brainfuck-101.html
-
-
 ##########################
 ###
 ### Severely updated version!
