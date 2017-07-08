@@ -2,6 +2,7 @@
 #define EBFI_INTERPRETER_HPP
 
 #include <string>
+#include <cstdint>
 
 namespace ebfi
 {

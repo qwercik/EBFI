@@ -18,16 +18,13 @@ void ebfi::Interpreter::setCode(const std::string& source_code)
 
 bool ebfi::Interpreter::loadCodeFromFile(const std::string& filename)
 {
-	std::ifstream code_file(filename, std::ios::binary | std::ios::ate);
+	std::ifstream code_file(filename, std::ios::binary);
 
 	if (!code_file.is_open())
 		return false;
 
-	std::size_t code_size = code_file.tellg();
-	code_file.seekg(0);
-
-	std::string source_code(code_size, '\0');
-	code_file.read(&source_code[0], code_size);
+	std::string source_code;
+	std::getline(code_file, source_code, '\0');
 
 	setCode(source_code);
 
@@ -37,12 +34,13 @@ bool ebfi::Interpreter::loadCodeFromFile(const std::string& filename)
 void ebfi::Interpreter::executeCode()
 {
 	std::array<uint8_t, 30000> memory;
+	memory.fill(0);
 	uint32_t memory_pointer = 0;
-
-	std::stack<uint32_t> stack;
+	
 	int loops_counter = 0;
+	std::stack<uint32_t> stack;
 
-	for (int instruction_pointer = 0; instruction_pointer < source_code.size(); ++instruction_pointer)
+	for (uint32_t instruction_pointer = 0; instruction_pointer < source_code.size(); ++instruction_pointer)
 	{
 		switch (source_code[instruction_pointer])
 		{
@@ -71,38 +69,31 @@ void ebfi::Interpreter::executeCode()
 				break;
 
 			case '[':
-				++loops_counter;
-
 				if (memory[memory_pointer])
 				{
 					stack.push(instruction_pointer);
 				}
 				else
 				{
-					while (loops_counter)
+					++instruction_pointer;
+					while (loops_counter > 0 || source_code[instruction_pointer] != ']')
 					{
+						if (source_code[instruction_pointer] == '[')
+							loops_counter++;
+						else if (source_code[instruction_pointer] == ']')
+							loops_counter--;
+
 						++instruction_pointer;
-
-						if (source_code[instruction_pointer] == ']')
-							--loops_counter;
 					}
-
-					--instruction_pointer;
 				}
-				
+
 				break;
 
 			case ']':
-				--loops_counter;
-
-				if (memory[memory_pointer])
-					instruction_pointer = stack.top() - 1;
-
+				instruction_pointer = stack.top() - 1;
 				stack.pop();
-				
 				break;
 		}
-	}
+	}	
 }
-
 
