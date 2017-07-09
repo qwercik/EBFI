@@ -90,7 +90,9 @@ void ebfi::Interpreter::executeCode()
 				break;
 
 			case ']':
-				instruction_pointer = stack.top() - 1;
+				if (memory[memory_pointer])
+					instruction_pointer = stack.top() - 1;
+				
 				stack.pop();
 				break;
 		}
